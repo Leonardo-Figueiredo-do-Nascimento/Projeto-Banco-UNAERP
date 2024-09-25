@@ -5,15 +5,20 @@ using namespace std;
 struct Registro{
 	float valor;
 	string operacao;
-	string motivo;
-	string categoria;	
+	string motivo;	
 };
+
+struct Categoria{
+	string nome;
+	float orcamento;	
+};
+
 
 Registro registrarEntrada(){
 	float quantia;
 	int opcaoMotivo;
 	Registro r1;
-	cout<<"\nInforme a quantia a ser depositada: "<<endl;
+	cout<<"\nInforme a quantia a ser depositada: R$"<<endl;
 	cin>>quantia;
 	do {
         cout << "Selecione uma das categorias para informar o motivo do deposito: " << endl;
@@ -34,71 +39,69 @@ Registro registrarEntrada(){
     } else if(opcaoMotivo == 3) {
         r1.motivo = "Outros";
     }
-
     return r1;
 }
 
 Registro registrarSaida(){
 	float valorSaque;
-	int opcaoCategoria;
 	Registro r1;
-	cout<<"Informe quanto dinheiro pretende retirar: "<<endl;
+	cout<<"\nInforme quanto dinheiro pretende retirar: "<<endl;
 	cin>>valorSaque;
 	cout<<"Informe onde vai gastar o dinheiro: "<<endl;
 	cin>>r1.motivo;
-	cout<<"\nAlguma das categorias abaixo se encaixa na sua descricao?"<<endl;
-	cout<<"1- Lazer \n2- Estudo \n3- Deslocamento \n4- Outros"
-	cin>>opcaoCategoria;
+	r1.operacao = "Saida";
+	r1.valor = valorSaque;
+	return r1;
+}
+
+void extrato(vector<Registro> registros, vector<Categoria> categorias){
+	cout<<"\n===============================";
+	cout<<"\n---------EXTRATO--------";
+	cout<<"\n==============================="<<endl;
 	
-	if(opcaoCategoria==1){
-		if(valorSaque>500){
-			cout<<"Valor a ser utilizado excede o teto de R$500,00.";
-			continue;			
-		}else {
-			return r1;
+	float total;
+	
+	for(Registro registro : registros){
+		if(registro.operacao == "Entrada"){
+			total += registro.valor;
+		} else{
+			total += registro.valor;
 		}
-	} else if(opcaoCategoria==2){
-		if(valorSaque>2000){
-			cout<<"Valor a ser utilizado excede o teto de R$2000,00.";
-			continue;			
-		}else {
-			return r1;
-		}
-	} else if(opcaoCategoria==3){
-		if(valorSaque>4000){
-			cout<<"Valor a ser utilizado excede o teto de R$4000,00.";
-			continue;			
-		}else {
-			return r1;
-		}
-	} if(opcaoCategoria==4){
-		if(valorSaque>200){
-			cout<<"Valor a ser utilizado excede o teto de R$200,00.";
-			continue;			
-		}else {
-			return r1;
-		}
-	} else{
-		cout<<"Selecione uma das categorias abaixo";
+	}
+	
+	for(Registro registro : registros){
+		cout<<"Operacao: "<<registro.operacao<<" || Fonte: "<<registro.motivo<<" || Quantia: R$"<<registro.valor<<endl;
+	}
+	cout<<"\n------------------------";
+	cout<<"\nTotal: R$"<<total<<endl;
+	cout<<"------------------------";
+	
+	for(Categoria c : categorias){
+		cout<<"\n Categoria: "<<c.nome<<" | Orçamento: R$ "<<c.orcamento;
 	}
 }
 
-void extrato(float total){
-	cout<<"\n--EXTRATO--"<<endl;
-	cout<<"\nTotal: R$"<<total<<endl;
+Categoria cadastrarCategoria(){
+	Categoria cat;
+	cout<<"\nInsira o nome da categoria: ";
+	cin>>cat.nome;
+	cout<<"\nInforne o orçamento da categoria: R$";
+	cin>>cat.orcamento;
+	return cat;
 }
 
 int main(int argc, char** argv) {
 	
 	int opcao=0;
 	float total = 0;
+	vector<Registro> vetorRegistros;
+	vector<Categoria> vetorCategorias;
 	
-	while(opcao!=4){
-		vector<Registro> vetorRegistros;
+	while(opcao!=5){
 		
 		cout<<"\n------BANCO------"<<endl;
 		cout<<"\n Digite a operacao desejada: "<<endl;
-		cout<<"1- Realizar entrada \n2- Realizar saida \n3- Ver extrato \n4- Sair"<<endl;
+		cout<<"1- Realizar entrada \n2- Realizar saida \n3- Cadastrar Categoria \n4- Ver extrato \n5- Sair"<<endl;
 		
 		cin>>opcao;
 		
@@ -113,8 +116,17 @@ int main(int argc, char** argv) {
 		}
 		
 		if(opcao==3){
-			extrato(total);
+			Categoria c1 = cadastrarCategoria();
+			vetorCategorias.push_back(c1);
 		}
+		
+		if(opcao==4){
+			extrato(vetorRegistros,vetorCategorias);
+		}
+		
+		if(opcao==5){
+			break;
+		} 
 	}
 	return 0;
 }
