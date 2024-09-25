@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <iomanip>
 using namespace std;
 
 struct Registro{
@@ -18,10 +19,10 @@ Registro registrarEntrada(){
 	float quantia;
 	int opcaoMotivo;
 	Registro r1;
-	cout<<"\nInforme a quantia a ser depositada: R$"<<endl;
+	cout<<"\nInforme a quantia a ser depositada: R$";
 	cin>>quantia;
 	do {
-        cout << "Selecione uma das categorias para informar o motivo do deposito: " << endl;
+        cout << "\nSelecione uma das categorias para informar o motivo do deposito: " << endl;
         cout << "1- Salario \n2- Jobs \n3- Outros" << endl;
         cin >> opcaoMotivo;
 
@@ -42,22 +43,24 @@ Registro registrarEntrada(){
     return r1;
 }
 
-Registro registrarSaida(){
+Registro registrarSaida(float saldo){
 	float valorSaque;
 	Registro r1;
-	cout<<"\nInforme quanto dinheiro pretende retirar: "<<endl;
+	cout<<"\nInforme quanto dinheiro pretende retirar: R$";
 	cin>>valorSaque;
-	cout<<"Informe onde vai gastar o dinheiro: "<<endl;
-	cin>>r1.motivo;
-	r1.operacao = "Saida";
-	r1.valor = valorSaque;
-	return r1;
+	if(valorSaque<=saldo){
+		cout<<"Informe onde vai gastar o dinheiro: "<<endl;
+		cin>>r1.motivo;
+		r1.operacao = "Saida";
+		r1.valor = valorSaque;
+		return r1;
+	}else{
+		cout<<"\nSaldo insuficiente."<<endl;
+		return 0;
+	}
 }
 
 void extrato(vector<Registro> registros, vector<Categoria> categorias){
-	cout<<"\n===============================";
-	cout<<"\n---------EXTRATO--------";
-	cout<<"\n==============================="<<endl;
 	
 	float total;
 	
@@ -65,27 +68,37 @@ void extrato(vector<Registro> registros, vector<Categoria> categorias){
 		if(registro.operacao == "Entrada"){
 			total += registro.valor;
 		} else{
-			total += registro.valor;
+			total -= registro.valor;
 		}
 	}
+
+	cout<<"\n==========================================="<<endl;
+	
+	cout<<"\n ==============================";
+	cout<<"\n|            EXTRATO           |";
+	cout<<"\n =============================="<<endl;
+	
+	cout<<"\n----------OPERACOES----------"<<endl;
 	
 	for(Registro registro : registros){
-		cout<<"Operacao: "<<registro.operacao<<" || Fonte: "<<registro.motivo<<" || Quantia: R$"<<registro.valor<<endl;
+		cout<<"Operacao: "<<registro.operacao<<" || Fonte: "<<registro.motivo<<" || Quantia: R$"<<fixed<<setprecision(2)<<registro.valor<<endl;
 	}
-	cout<<"\n------------------------";
-	cout<<"\nTotal: R$"<<total<<endl;
-	cout<<"------------------------";
-	
+	cout<<"\n----------CATEGORIAS----------"<<endl;
 	for(Categoria c : categorias){
-		cout<<"\n Categoria: "<<c.nome<<" | Orçamento: R$ "<<c.orcamento;
+		cout<<"\n Categoria: "<<c.nome<<" | Orcamento: R$ "<<fixed<<setprecision(2)<<c.orcamento<<endl;
 	}
+
+	cout<<"\n------------------------";
+	cout<<"\n   TOTAL: R$"<<fixed<<setprecision(2)<<total<<endl;
+	cout<<"------------------------"<<endl;
+	cout<<"\n==========================================="<<endl;
 }
 
 Categoria cadastrarCategoria(){
 	Categoria cat;
 	cout<<"\nInsira o nome da categoria: ";
 	cin>>cat.nome;
-	cout<<"\nInforne o orçamento da categoria: R$";
+	cout<<"\nInforme o orcamento da categoria: R$";
 	cin>>cat.orcamento;
 	return cat;
 }
@@ -100,9 +113,9 @@ int main(int argc, char** argv) {
 	while(opcao!=5){
 		
 		cout<<"\n------BANCO------"<<endl;
-		cout<<"\n Digite a operacao desejada: "<<endl;
+		cout<<"\nDigite a operacao desejada: "<<endl;
 		cout<<"1- Realizar entrada \n2- Realizar saida \n3- Cadastrar Categoria \n4- Ver extrato \n5- Sair"<<endl;
-		
+		cout<<"-> ";
 		cin>>opcao;
 		
 		if(opcao==1){
@@ -111,8 +124,10 @@ int main(int argc, char** argv) {
 		}
 		
 		if(opcao==2){
-			Registro r = registrarSaida();
-			vetorRegistros.push_back(r);
+			Registro r = registrarSaida(total);
+			if(r.motivo != ""){				
+				vetorRegistros.push_back(r);
+			}
 		}
 		
 		if(opcao==3){
