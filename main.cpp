@@ -56,21 +56,11 @@ Registro registrarSaida(float saldo){
 		return r1;
 	}else{
 		cout<<"\nSaldo insuficiente."<<endl;
-		return 0;
+		return r1;
 	}
 }
 
-void extrato(vector<Registro> registros, vector<Categoria> categorias){
-	
-	float total;
-	
-	for(Registro registro : registros){
-		if(registro.operacao == "Entrada"){
-			total += registro.valor;
-		} else{
-			total -= registro.valor;
-		}
-	}
+void extrato(vector<Registro> registros, vector<Categoria> categorias,float total){
 
 	cout<<"\n==========================================="<<endl;
 	
@@ -81,14 +71,14 @@ void extrato(vector<Registro> registros, vector<Categoria> categorias){
 	cout<<"\n----------OPERACOES----------"<<endl;
 	
 	for(Registro registro : registros){
-		cout<<"Operacao: "<<registro.operacao<<" || Fonte: "<<registro.motivo<<" || Quantia: R$"<<fixed<<setprecision(2)<<registro.valor<<endl;
+		cout<<"\nOperacao: "<<registro.operacao<<" || Fonte: "<<registro.motivo<<" || Quantia: R$"<<fixed<<setprecision(2)<<registro.valor;
 	}
-	cout<<"\n----------CATEGORIAS----------"<<endl;
+	cout<<"\n\n----------CATEGORIAS----------"<<endl;
 	for(Categoria c : categorias){
-		cout<<"\n Categoria: "<<c.nome<<" | Orcamento: R$ "<<fixed<<setprecision(2)<<c.orcamento<<endl;
+		cout<<"\n Categoria: "<<c.nome<<" | Orcamento: R$ "<<fixed<<setprecision(2)<<c.orcamento;
 	}
 
-	cout<<"\n------------------------";
+	cout<<"\n\n------------------------";
 	cout<<"\n   TOTAL: R$"<<fixed<<setprecision(2)<<total<<endl;
 	cout<<"------------------------"<<endl;
 	cout<<"\n==========================================="<<endl;
@@ -111,7 +101,7 @@ int main(int argc, char** argv) {
 	vector<Categoria> vetorCategorias;
 	
 	while(opcao!=5){
-		
+	
 		cout<<"\n------BANCO------"<<endl;
 		cout<<"\nDigite a operacao desejada: "<<endl;
 		cout<<"1- Realizar entrada \n2- Realizar saida \n3- Cadastrar Categoria \n4- Ver extrato \n5- Sair"<<endl;
@@ -121,12 +111,14 @@ int main(int argc, char** argv) {
 		if(opcao==1){
 			Registro r = registrarEntrada();
 			vetorRegistros.push_back(r);	
+			total += r.valor;
 		}
 		
 		if(opcao==2){
 			Registro r = registrarSaida(total);
 			if(r.motivo != ""){				
 				vetorRegistros.push_back(r);
+				total -= r.valor;
 			}
 		}
 		
@@ -136,7 +128,7 @@ int main(int argc, char** argv) {
 		}
 		
 		if(opcao==4){
-			extrato(vetorRegistros,vetorCategorias);
+			extrato(vetorRegistros,vetorCategorias,total);
 		}
 		
 		if(opcao==5){
